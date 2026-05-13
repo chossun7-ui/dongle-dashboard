@@ -1,31 +1,13 @@
-# CHANGELOG
+# Changelog
 
-이 파일은 저장소의 모든 의미 있는 변경사항을 사람이 읽기 쉽게 누적 기록한다. (규칙 2 — `CLAUDE.md` 참조)
+이 파일은 본 저장소의 모든 변경사항을 사람이 읽기 쉬운 형식으로 기록한다. 최상단이 최신이다.
+규칙: 한 줄 요약(날짜 · 요약 · 관련 파일/디렉토리). 사소한 오타 수정도 빠뜨리지 않는다.
 
-## 작성 규칙
+## 2026-05-13
 
-- **최신 항목이 맨 위**. 새 항목은 항상 이 안내 블록 바로 아래에 추가한다.
-- 한 항목 형식:
-  ```
-  ## YYYY-MM-DD — <한 줄 요약>
-  - **타입**: feat / fix / docs / refactor / chore / data
-  - **파일**: `path/one`, `path/two`
-  - **요지**: 무엇을 왜 바꿨는지 1~3문장 (한국어)
-  - **커밋**: <short sha> (커밋 후 채워 넣기)
-  ```
-- 커밋과 1:1로 매칭되지 않아도 된다 — 사용자가 보기에 의미 있는 단위로 묶어도 무방.
-- 사소한 오타 수정도 빠뜨리지 않는다.
-
----
-
-## 2026-05-13 — 프로젝트 규칙 7개 항목 도입 및 CHANGELOG.md 신설
-- **타입**: docs
-- **파일**: `CLAUDE.md`, `CHANGELOG.md`
-- **요지**: 사용자 지정 작업 규약 7개(한국어 응답, 변경 이력 기록, 문서 동기화, 인계 가능한 상세도, 대화 전체 참조, 1차 검증, 2차 누락 검증)를 `CLAUDE.md` 상단에 "프로젝트 규칙" 섹션으로 추가. 규칙 2 충족을 위해 변경 이력 기록 파일(`CHANGELOG.md`)을 새로 생성하고 본 항목을 첫 엔트리로 등록.
-- **커밋**: 본 항목 자체를 도입하는 커밋 (`git log` 최상단 참조)
-
-## 2026-05-13 — CLAUDE.md 초기 작성
-- **타입**: docs
-- **파일**: `CLAUDE.md`
-- **요지**: 향후 Claude Code 세션이 즉시 컨텍스트를 잡을 수 있도록 저장소 구조(단일 `index.html`), 듀얼 데이터 흐름(라이브 `/api/dashboard` ↔ 임베디드 스냅샷 `window.__DONGLE_EMBEDDED_DATA__`, `transformEmbeddedData()` 브리지), 세 리스크 프로파일 하드코딩, 테마·차트 관례를 문서화.
-- **커밋**: `e666c6f`
+- 2026-05-13 · Recipe Film Script 비교 대시보드로 저장소 전면 재구성. 기존 Dongle Trading 대시보드(`index.html`·구 `CLAUDE.md`·구 `CHANGELOG.md`)는 main 브랜치 및 git 히스토리에 보존. · `CLAUDE.md`, `CHANGELOG.md`, `README.md`, `.gitignore`
+- 2026-05-13 · 프로젝트 디렉토리 골격 생성 (backend/app/{api,core,db,services,parsers,compare}, frontend/src/{components,pages,hooks,lib,types}, docs/). · 트리 구조
+- 2026-05-13 · 비교 알고리즘 인터페이스 명세 작성 — 사내 AI가 본체를 작성할 때 충족해야 하는 입력/출력 타입·예제 포함. · `docs/COMPARE_ALGORITHM_SPEC.md`, `backend/app/compare/`
+- 2026-05-13 · 백엔드 골격 추가 — FastAPI 진입점, SQLite 스키마(FTS5 포함), 단일 관리자 인증, FTP 비번 Fernet 암호화, FTP 스캐너 인터페이스. · `backend/app/`
+- 2026-05-13 · 프론트엔드 골격 추가 — Vite+React+TS+Tailwind 셸, 로그인, 라인/모델/설비 다중선택 흐름의 스텁 페이지. · `frontend/`
+- 2026-05-13 · Docker Compose 및 개발 워크플로 구성 — backend Uvicorn, frontend nginx 정적 서빙, SQLite·로그 볼륨. · `docker-compose.yml`, 각 Dockerfile

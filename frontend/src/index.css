@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+/* Diff 뷰 공통 */
+.diff-added {
+  @apply bg-emerald-500/15 border-l-2 border-emerald-500;
+}
+.diff-removed {
+  @apply bg-rose-500/15 border-l-2 border-rose-500;
+}
+.diff-changed {
+  @apply bg-amber-500/15 border-l-2 border-amber-500;
+}

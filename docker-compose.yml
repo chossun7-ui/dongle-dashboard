@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme-now}
+      FERNET_KEY: ${FERNET_KEY}
+      SESSION_SECRET: ${SESSION_SECRET:-dev-only-change-me}
+      SQLITE_PATH: /data/recipe.db
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SCAN_WORKERS_GLOBAL: ${SCAN_WORKERS_GLOBAL:-8}
+      SCAN_WORKERS_PER_EQUIPMENT: ${SCAN_WORKERS_PER_EQUIPMENT:-2}
+      SCAN_TIMEOUT_SEC: ${SCAN_TIMEOUT_SEC:-30}
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    expose:
+      - "8000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    restart: unless-stopped
