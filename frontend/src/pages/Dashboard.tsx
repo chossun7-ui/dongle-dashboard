@@ -1,7 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "@/lib/api";
 import { MultiSelect } from "@/components/MultiSelect";
+import { CompareDialog } from "@/components/CompareDialog";
+import { FtsSearch } from "@/components/FtsSearch";
+import { FavoritesPanel } from "@/components/FavoritesPanel";
+import { HistoryDialog } from "@/components/HistoryDialog";
 import { useIntListUrlState } from "@/hooks/useUrlState";
 import type { Equipment, Line, Model, RecipeListItem } from "@/types";
 
@@ -11,6 +15,10 @@ export default function Dashboard() {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
   const [recipes, setRecipes] = useState<RecipeListItem[]>([]);
   const [scanning, setScanning] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [historyRecipeId, setHistoryRecipeId] = useState<number | null>(null);
+  const headerSearchRef = useRef<HTMLButtonElement | null>(null);
 
   const [selLines, setSelLines] = useIntListUrlState("lines");
   const [selModels, setSelModels] = useIntListUrlState("models");
@@ -21,6 +29,18 @@ export default function Dashboard() {
   useEffect(() => {
     api.get<Line[]>("/api/lines").then(setLines).catch(console.error);
     api.get<Model[]>("/api/models").then(setModels).catch(console.error);
+  }, []);
+
+  // Ctrl+K → 풀텍스트 검색 다이얼로그
+  useEffect(() => {
+    function handler(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    }
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, []);
 
   // 라인·모델 선택에 따라 설비 후보 갱신
@@ -85,6 +105,14 @@ export default function Dashboard() {
       <header className="border-b border-slate-800 px-4 py-2 flex items-center justify-between">
         <h1 className="text-base font-semibold">Recipe Film Script 비교 대시보드</h1>
         <nav className="flex items-center gap-3 text-sm">
+          <button
+            ref={headerSearchRef}
+            onClick={() => setSearchOpen(true)}
+            className="text-slate-400 hover:text-sky-300"
+            title="전체 Script 풀텍스트 검색 (Ctrl+K)"
+          >
+            검색
+          </button>
           <Link to="/admin" className="text-slate-400 hover:text-sky-300">
             관리자
           </Link>
@@ -124,6 +152,20 @@ export default function Dashboard() {
           >
             {scanning ? "요청 중..." : `선택 설비 재스캔 (${selEquips.length})`}
           </button>
+          <FavoritesPanel
+            selection={{
+              lines: selLines,
+              models: selModels,
+              equipments: selEquips,
+            }}
+            onApplyPreset={(p) => {
+              setSelLines(p.lines);
+              setSelModels(p.models);
+              setSelEquips(p.equipments);
+            }}
+            currentRecipeIds={selRecipes}
+            onApplyGroup={(ids) => setSelRecipes(ids)}
+          />
         </aside>
 
         <section className="col-span-9 rounded-lg border border-slate-800 bg-slate-900/40 p-3">
@@ -138,7 +180,7 @@ export default function Dashboard() {
             </div>
             <button
               disabled={selRecipes.length < 2}
-              onClick={() => alert("비교 다이얼로그는 다음 단계 PR에서 추가됩니다.")}
+              onClick={() => setCompareOpen(true)}
               className="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 text-white text-sm"
             >
               선택 비교 ({selRecipes.length})
@@ -162,24 +204,37 @@ export default function Dashboard() {
                       return (
                         <li
                           key={r.id}
-                          className={`px-3 py-1.5 text-xs flex items-center gap-2 cursor-pointer ${
+                          className={`px-3 py-1.5 text-xs flex items-center gap-2 ${
                             on ? "bg-sky-500/10" : "hover:bg-slate-800/40"
                           }`}
-                          onClick={() => {
-                            const next = on
-                              ? selRecipes.filter((x) => x !== r.id)
-                              : [...selRecipes, r.id];
-                            setSelRecipes(next);
-                          }}
                         >
-                          <span>{on ? "■" : "□"}</span>
-                          <span className="text-slate-300">
-                            {r.line_name}/{r.model_name}/{r.equipment_name}
-                          </span>
-                          <span className="text-slate-500 font-mono">{r.path}</span>
-                          <span className="ml-auto text-slate-600">
+                          <button
+                            onClick={() => {
+                              const next = on
+                                ? selRecipes.filter((x) => x !== r.id)
+                                : [...selRecipes, r.id];
+                              setSelRecipes(next);
+                            }}
+                            className="flex items-center gap-2 flex-1 text-left"
+                          >
+                            <span>{on ? "■" : "□"}</span>
+                            <span className="text-slate-300">
+                              {r.line_name}/{r.model_name}/{r.equipment_name}
+                            </span>
+                            <span className="text-slate-500 font-mono">
+                              {r.path}
+                            </span>
+                          </button>
+                          <span className="text-slate-600">
                             {r.body_hash.slice(0, 8)} · {r.last_scanned_at}
                           </span>
+                          <button
+                            onClick={() => setHistoryRecipeId(r.id)}
+                            title="변경 이력"
+                            className="text-slate-500 hover:text-sky-300"
+                          >
+                            ⟳
+                          </button>
                         </li>
                       );
                     })}
@@ -190,6 +245,24 @@ export default function Dashboard() {
           )}
         </section>
       </main>
+
+      <CompareDialog
+        open={compareOpen}
+        recipeIds={selRecipes}
+        onClose={() => setCompareOpen(false)}
+      />
+      <FtsSearch
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onPick={(id) => {
+          if (!selRecipes.includes(id)) setSelRecipes([...selRecipes, id]);
+          setSearchOpen(false);
+        }}
+      />
+      <HistoryDialog
+        recipeId={historyRecipeId}
+        onClose={() => setHistoryRecipeId(null)}
+      />
     </div>
   );
 }

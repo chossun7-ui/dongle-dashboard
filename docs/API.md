@@ -42,7 +42,8 @@
 |---|---|---|
 | GET | `/api/recipes?equipment_ids=1,2,3` | 캐시된 Recipe 목록 |
 | GET | `/api/recipes/{id}` | 본문/메타 |
-| GET | `/api/recipes/{id}/snapshots` | 변경 이력 |
+| GET | `/api/recipes/{id}/snapshots` | 변경 이력 (current 가상 항목 + 과거 스냅샷) |
+| GET | `/api/recipes/{id}/snapshots/{snap_id}` | 특정 시점 본문. `snap_id='current'`면 현재 |
 | GET | `/api/recipes/search/fts?q=...` | FTS5 풀텍스트 검색 |
 
 ## 스캔
@@ -60,6 +61,18 @@
 | POST | `/api/compare` | `{recipe_ids: [...], options: {...}}` → CompareResult |
 
 비교 본체는 `docs/COMPARE_ALGORITHM_SPEC.md` 참조.
+
+## Export
+
+비교를 실행하여 결과를 파일로 내려준다.
+
+| Method | Path | 응답 |
+|---|---|---|
+| POST | `/api/export/html` | `text/html` (단일 파일, self-contained) |
+| POST | `/api/export/csv`  | `text/csv` (Excel용 BOM 포함) |
+| POST | `/api/export/pdf`  | `application/pdf` (WeasyPrint) |
+
+요청 본문은 `/api/compare`와 동일: `{recipe_ids, options}`.
 
 ## 즐겨찾기
 

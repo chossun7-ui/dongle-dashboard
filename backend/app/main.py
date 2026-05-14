@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from itsdangerous import URLSafeTimedSerializer
 
-from app.api import auth, compare, favorites, ftp_config, master, recipes, scan
+from app.api import auth, compare, export, favorites, ftp_config, master, recipes, scan
 from app.api.envelope import ok
 from app.core.config import get_settings
 from app.db.session import init_engine
@@ -42,6 +42,7 @@ def create_app() -> FastAPI:
     app.include_router(recipes.router)
     app.include_router(scan.router)
     app.include_router(compare.router)
+    app.include_router(export.router)
     app.include_router(favorites.router)
 
     @app.get("/api/health")

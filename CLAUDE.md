@@ -56,18 +56,20 @@
 │       ├── main.py
 │       ├── core/            # config, security, password crypto
 │       ├── db/              # SQLAlchemy models, schema, session
-│       ├── api/             # FastAPI routers
-│       ├── services/        # ftp_scanner, encoding, cache, snapshot, search, export
+│       ├── api/             # FastAPI routers: auth, master, ftp_config, recipes,
+│       │                    #                   scan, compare, export, favorites
+│       ├── services/        # ftp_scanner, encoding
 │       ├── parsers/         # analysis2.txt, StrategyID.ini 파서
 │       └── compare/         # ★ 비교 알고리즘 (인터페이스 + stub — 본체는 사내 AI)
 ├── frontend/                # React + Vite + TS + Tailwind
 │   ├── package.json
 │   ├── Dockerfile
 │   └── src/
-│       ├── pages/
-│       ├── components/
-│       ├── lib/
-│       ├── hooks/
+│       ├── pages/           # Dashboard, Admin, Login
+│       ├── components/      # MultiSelect, CompareDialog, HistoryDialog,
+│       │                    #   FtsSearch, FavoritesPanel, FtpConfigPanel
+│       ├── lib/             # api (envelope)
+│       ├── hooks/           # useUrlState
 │       └── types/
 └── docs/
     ├── COMPARE_ALGORITHM_SPEC.md   # ★★ 사내 AI 인계 명세

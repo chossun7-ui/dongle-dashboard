@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
+import { FtpConfigPanel } from "@/components/FtpConfigPanel";
 import type { Equipment, Line, Model } from "@/types";
 
 export default function Admin() {
@@ -199,6 +200,8 @@ export default function Admin() {
             </tbody>
           </table>
         </Card>
+
+        <FtpConfigPanel />
       </main>
     </div>
   );

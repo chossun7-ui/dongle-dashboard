@@ -3,6 +3,16 @@
 이 파일은 본 저장소의 모든 변경사항을 사람이 읽기 쉬운 형식으로 기록한다. 최상단이 최신이다.
 규칙: 한 줄 요약(날짜 · 요약 · 관련 파일/디렉토리). 사소한 오타 수정도 빠뜨리지 않는다.
 
+## 2026-05-14
+
+- 2026-05-14 · 비교 다이얼로그 본격 구현 — side-by-side / unified 토글, 좌우 동기 스크롤, 검색 하이라이트, 변경 점프(Alt+↑/↓), 사이드바 diff 목록, kind/severity 배지. · `frontend/src/components/CompareDialog.tsx`, `pages/Dashboard.tsx`
+- 2026-05-14 · Export 백엔드 추가 — HTML/CSV/PDF. Jinja 템플릿 + WeasyPrint. CSV는 Excel용 BOM 포함. · `backend/app/api/export.py`, `docs/API.md`
+- 2026-05-14 · FTP 전역설정 관리자 UI 추가 — 사용자명/비번(변경 시만 입력)/포트/모드/캐시 TTL/인코딩 우선순위/as 정규식. · `frontend/src/components/FtpConfigPanel.tsx`, `pages/Admin.tsx`
+- 2026-05-14 · 변경 이력 시계열 뷰 추가 — Recipe별 current+스냅샷 시점 선택 좌우 비교. 백엔드는 단일 스냅샷 조회 엔드포인트 보강. · `frontend/src/components/HistoryDialog.tsx`, `backend/app/api/recipes.py`
+- 2026-05-14 · FTS5 풀텍스트 검색 UI 추가 — Ctrl+K로 열고 결과 클릭 시 비교 대상에 추가. · `frontend/src/components/FtsSearch.tsx`
+- 2026-05-14 · 즐겨찾기·프리셋 패널 추가 — preset(라인/모델/설비 다중선택 조합)·group(비교 Recipe 모음) 저장/적용/삭제. · `frontend/src/components/FavoritesPanel.tsx`
+- 2026-05-14 · 파서·인코딩 유닛 테스트 9건 보강 (총 pytest 13 passed). · `backend/tests/test_parsers_and_encoding.py`
+
 ## 2026-05-13
 
 - 2026-05-13 · Recipe Film Script 비교 대시보드로 저장소 전면 재구성. 기존 Dongle Trading 대시보드(`index.html`·구 `CLAUDE.md`·구 `CHANGELOG.md`)는 main 브랜치 및 git 히스토리에 보존. · `CLAUDE.md`, `CHANGELOG.md`, `README.md`, `.gitignore`
