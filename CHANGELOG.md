@@ -3,6 +3,15 @@
 이 파일은 본 저장소의 모든 변경사항을 사람이 읽기 쉬운 형식으로 기록한다. 최상단이 최신이다.
 규칙: 한 줄 요약(날짜 · 요약 · 관련 파일/디렉토리). 사소한 오타 수정도 빠뜨리지 않는다.
 
+## 2026-05-15
+
+- 2026-05-15 · N-way 비교 가독성 산출물 추가 (schema 1.0 → 1.1). 설비별로 본문이 동일하거나 키-값 시그니처가 같은 그룹을 K개 Cluster로 압축하여 K(K-1)/2 페어만 보여준다. 본체가 비워둔 경우 라우터가 폴백으로 채운다. · `backend/app/compare/types.py`, `clustering.py`, `interface.py`, `__init__.py`
+- 2026-05-15 · CompareDialog에 탭 4개 통합 — [clusters][pivot][side-by-side][unified]. N≥3이면 clusters를 기본 탭으로. · `frontend/src/components/CompareDialog.tsx`
+- 2026-05-15 · ClusterView 추가 — 클러스터 카드(라인·모델 그루핑 칩, 다수/외톨이 배지) + 두 클러스터 선택 시 의미 단위 diff 표. · `frontend/src/components/ClusterView.tsx`
+- 2026-05-15 · PivotView 추가 — 키별 분기를 한 행으로(다수/외톨이 색상 구분, "없음" 분기 별도, 라인·모델별 칩 그루핑, 외톨이 보유 키 필터, 검색). · `frontend/src/components/PivotView.tsx`
+- 2026-05-15 · 클러스터링·피벗 단위 테스트 7건 추가 (총 pytest 20 passed). · `backend/tests/test_clustering.py`
+- 2026-05-15 · 비교 알고리즘 명세 문서를 1.1로 보강 — Cluster/Pivot 타입과 권장 규칙 추가. · `docs/COMPARE_ALGORITHM_SPEC.md`
+
 ## 2026-05-14
 
 - 2026-05-14 · 비교 다이얼로그 본격 구현 — side-by-side / unified 토글, 좌우 동기 스크롤, 검색 하이라이트, 변경 점프(Alt+↑/↓), 사이드바 diff 목록, kind/severity 배지. · `frontend/src/components/CompareDialog.tsx`, `pages/Dashboard.tsx`

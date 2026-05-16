@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@/lib/api";
+import { ClusterView } from "@/components/ClusterView";
+import { PivotView } from "@/components/PivotView";
 import type { CompareResult, ComparePair, Diff } from "@/types";
 
 interface Props {
@@ -8,7 +10,7 @@ interface Props {
   onClose: () => void;
 }
 
-type ViewMode = "side" | "unified";
+type ViewMode = "clusters" | "pivot" | "side" | "unified";
 
 /**
  * 비교 다이얼로그.
@@ -29,7 +31,10 @@ export function CompareDialog({ recipeIds, open, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CompareResult | null>(null);
-  const [mode, setMode] = useState<ViewMode>("side");
+  // N≥3이면 clusters를 기본 탭으로, N=2이면 pair(side-by-side)를 기본으로.
+  const [mode, setMode] = useState<ViewMode>(
+    recipeIds.length >= 3 ? "clusters" : "side"
+  );
   const [search, setSearch] = useState("");
   const [activePair, setActivePair] = useState(0);
 
@@ -38,6 +43,7 @@ export function CompareDialog({ recipeIds, open, onClose }: Props) {
     setLoading(true);
     setError(null);
     setResult(null);
+    setMode(recipeIds.length >= 3 ? "clusters" : "side");
     api
       .post<CompareResult>("/api/compare", { recipe_ids: recipeIds, options: {} })
       .then((r) => setResult(r))
@@ -80,20 +86,40 @@ export function CompareDialog({ recipeIds, open, onClose }: Props) {
           </div>
         )}
 
-        {!loading && result && pair && (
-          <div className="flex-1 min-h-0 grid grid-cols-12 gap-2 px-3 pb-3">
-            <DiffSidebar
-              pair={pair}
-              search={search}
-              onJump={(d) => scrollToLine(d.left_line, d.right_line)}
-            />
-            <div className="col-span-10 min-h-0 overflow-hidden rounded border border-slate-800">
-              {mode === "side" ? (
-                <SideBySideView pair={pair} search={search} inputs={result.inputs} />
-              ) : (
-                <UnifiedView pair={pair} search={search} />
-              )}
-            </div>
+        {!loading && result && (
+          <div className="flex-1 min-h-0 flex flex-col px-3 pb-3">
+            {/* clusters / pivot 탭은 전체 폭으로 */}
+            {mode === "clusters" && result.clusters && (
+              <ClusterView clusters={result.clusters} inputs={result.inputs} />
+            )}
+            {mode === "pivot" && result.pivot && (
+              <PivotView pivot={result.pivot} inputs={result.inputs} />
+            )}
+            {(mode === "side" || mode === "unified") && pair && (
+              <div className="flex-1 min-h-0 grid grid-cols-12 gap-2">
+                <DiffSidebar
+                  pair={pair}
+                  search={search}
+                  onJump={(d) => scrollToLine(d.left_line, d.right_line)}
+                />
+                <div className="col-span-10 min-h-0 overflow-hidden rounded border border-slate-800">
+                  {mode === "side" ? (
+                    <SideBySideView
+                      pair={pair}
+                      search={search}
+                      inputs={result.inputs}
+                    />
+                  ) : (
+                    <UnifiedView pair={pair} search={search} />
+                  )}
+                </div>
+              </div>
+            )}
+            {(mode === "side" || mode === "unified") && !pair && (
+              <div className="flex-1 grid place-items-center text-slate-500 text-sm">
+                선택된 페어가 없습니다.
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -159,6 +185,20 @@ function CompareHeader({
           </select>
         )}
         <div className="flex bg-slate-900 border border-slate-800 rounded text-xs overflow-hidden">
+          <button
+            onClick={() => setMode("clusters")}
+            className={`px-2 py-1 ${mode === "clusters" ? "bg-sky-600" : "hover:bg-slate-800"}`}
+            title="설비를 동일 패턴끼리 클러스터로 압축 (N대 많을 때 권장)"
+          >
+            clusters
+          </button>
+          <button
+            onClick={() => setMode("pivot")}
+            className={`px-2 py-1 ${mode === "pivot" ? "bg-sky-600" : "hover:bg-slate-800"}`}
+            title="키별 값 분기를 한 표로"
+          >
+            pivot
+          </button>
           <button
             onClick={() => setMode("side")}
             className={`px-2 py-1 ${mode === "side" ? "bg-sky-600" : "hover:bg-slate-800"}`}

@@ -66,8 +66,8 @@
 │   ├── Dockerfile
 │   └── src/
 │       ├── pages/           # Dashboard, Admin, Login
-│       ├── components/      # MultiSelect, CompareDialog, HistoryDialog,
-│       │                    #   FtsSearch, FavoritesPanel, FtpConfigPanel
+│       ├── components/      # MultiSelect, CompareDialog, ClusterView, PivotView,
+│       │                    #   HistoryDialog, FtsSearch, FavoritesPanel, FtpConfigPanel
 │       ├── lib/             # api (envelope)
 │       ├── hooks/           # useUrlState
 │       └── types/
@@ -156,6 +156,15 @@ recipe_fts   (FTS5 virtual table on recipes.body_text, recipes.film_name)
 ## 인코딩 폴백
 
 순서: UTF-8 → CP949 → chardet 자동 감지. 모두 실패 시 errors=`replace`로 디코딩하고 경고 플래그. 관리자가 특정 설비에 한해 강제 지정 가능.
+
+## N-way 비교 가독성 규칙 (1.1)
+
+설비 ≥3대 비교 시 화면이 N(N-1)/2로 폭주하지 않도록 두 가지 가독성 산출물을 항상 같이 제공한다.
+
+- **Clusters**: 같은 본문(또는 키-값 시그니처)을 가진 설비끼리 한 클러스터로 묶는다. 50대 비교가 보통 K=2~4 클러스터로 압축됨. K(K-1)/2 페어만 보여줌. 외톨이(=size 1) 클러스터는 빨강으로 강조 — 그것이 99% 사고 원인.
+- **Pivot**: 키별 분기를 한 줄로. 같은 값을 가진 설비끼리 라인·모델별 칩으로 묶어 한 행에 표시. 분기 1개(=모두 동일)인 키는 기본 제외.
+- 기본 탭은 N=2면 `side-by-side`, N≥3이면 `clusters`로 자동 전환.
+- 본 두 산출물은 `CompareResult.clusters`/`pivot` 옵션 필드. 사내 AI 본체가 채우지 않으면 라우터가 `app/compare/clustering.py` 폴백으로 자체 계산. 본체가 더 정밀한 의미 단위 파싱을 보유했다면 직접 채워 폴백 비활성화 가능.
 
 ## 캐시 전략
 

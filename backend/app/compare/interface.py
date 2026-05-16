@@ -49,10 +49,17 @@ def compare_recipes(request: CompareRequest) -> CompareResult:
     API 라우터는 항상 이 함수를 통해 비교를 수행한다.
     동적 폴백 덕분에 사내 AI가 본체를 늦게 제출해도 서버 코드가 망가지지 않는다.
 
+    본체 실행 후, 부가 산출물(clusters/pivot)을 채우지 않았으면 폴백으로 채워준다.
+    본체가 직접 채웠다면 그 값을 존중한다.
+
     CPU 바운드이므로 FastAPI 라우터에서는 `loop.run_in_executor(ProcessPoolExecutor, ...)`
     로 감싸 호출한다.
     """
     if len(request.recipes) < 2:
         raise ValueError("비교를 위해서는 최소 2개의 Recipe가 필요합니다.")
     impl = _resolve_impl()
-    return impl(request)
+    result = impl(request)
+    # 부가 산출물 폴백 — 라이트하게 self-contained로 계산.
+    from app.compare.clustering import attach_clusters_and_pivot
+
+    return attach_clusters_and_pivot(request, result)

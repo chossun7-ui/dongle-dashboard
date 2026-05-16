@@ -89,20 +89,63 @@ export interface CompareSummary {
   by_severity: Record<string, number>;
 }
 
+export interface RecipeMeta {
+  recipe_id: number;
+  equipment_name: string;
+  line_name: string;
+  model_name: string;
+  path: string;
+  film_name: string;
+  analysis2_text: string;
+  strategy_ini_text: string;
+}
+
+// 1.1: N-way 가독성용 부가 산출물
+
+export interface Cluster {
+  id: string;
+  recipe_ids: number[];
+  representative_recipe_id: number;
+  signature: string;
+  body_hash_match: boolean;
+  is_majority: boolean;
+}
+
+export interface ClusterPairDiff {
+  left_cluster_id: string;
+  right_cluster_id: string;
+  diffs: Diff[];
+}
+
+export interface ClusteringResult {
+  clusters: Cluster[];
+  pair_diffs: ClusterPairDiff[];
+}
+
+export interface PivotBranch {
+  value: string;
+  recipe_ids: number[];
+  is_majority: boolean;
+}
+
+export interface PivotEntry {
+  section: string | null;
+  key: string;
+  branches: PivotBranch[];
+  is_outlier_present: boolean;
+}
+
+export interface PivotResult {
+  entries: PivotEntry[];
+}
+
 export interface CompareResult {
   schema_version: string;
   generated_at: string;
-  inputs: Array<{
-    recipe_id: number;
-    equipment_name: string;
-    line_name: string;
-    model_name: string;
-    path: string;
-    film_name: string;
-    analysis2_text: string;
-    strategy_ini_text: string;
-  }>;
+  inputs: RecipeMeta[];
   pairs: ComparePair[];
   summary: CompareSummary;
   warnings: string[];
+  clusters: ClusteringResult | null;
+  pivot: PivotResult | null;
 }

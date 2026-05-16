@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Literal
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 
 
 class CompareError(Exception):
@@ -109,6 +109,61 @@ class CompareSummary:
     by_severity: dict[str, int]
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Clusters & Pivot (1.1 추가)
+#
+# 동기: N≥10 설비 비교 시 N(N-1)/2 페어를 모두 펼치면 가독성 붕괴.
+# 같은 본문(또는 같은 키-값 시그니처)을 가진 설비끼리 묶어
+# K개 클러스터로 압축하면 K(K-1)/2 ≪ N(N-1)/2 가 된다.
+#
+# 본 두 구조는 본체(algorithm.py)가 직접 채워주면 그대로 사용하고,
+# 비어 있으면 라우터/interface가 자체 계산하여 보강한다.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class Cluster:
+    id: str                            # "A", "B", "C", ...
+    recipe_ids: list[int]
+    representative_recipe_id: int      # 클러스터 대표 (정렬상 가장 작은 ID)
+    signature: str                     # 키-값 정규화 sha256
+    body_hash_match: bool              # True면 본문 바이트 동일
+    is_majority: bool                  # 다수 그룹 (size가 최대이고 2 이상)
+
+
+@dataclass(frozen=True)
+class ClusterPairDiff:
+    left_cluster_id: str
+    right_cluster_id: str
+    diffs: list[Diff]
+
+
+@dataclass(frozen=True)
+class ClusteringResult:
+    clusters: list[Cluster]
+    pair_diffs: list[ClusterPairDiff]
+
+
+@dataclass(frozen=True)
+class PivotBranch:
+    value: str                         # "(없음)" 이면 해당 키가 누락된 설비들
+    recipe_ids: list[int]
+    is_majority: bool
+
+
+@dataclass(frozen=True)
+class PivotEntry:
+    section: str | None
+    key: str
+    branches: list[PivotBranch]        # 큰 그룹이 첫 번째
+    is_outlier_present: bool           # 분기 중 size=1 그룹이 하나라도 있으면 True
+
+
+@dataclass(frozen=True)
+class PivotResult:
+    entries: list[PivotEntry]          # 분기 수·외톨이 보유 키 우선 정렬
+
+
 @dataclass(frozen=True)
 class CompareResult:
     schema_version: str
@@ -117,3 +172,6 @@ class CompareResult:
     pairs: list[ComparePair]
     summary: CompareSummary
     warnings: list[str] = field(default_factory=list)
+    # 1.1: N-way 가독성용 부가 산출물. 본체가 채워주지 않으면 라우터가 보강.
+    clusters: ClusteringResult | None = None
+    pivot: PivotResult | None = None

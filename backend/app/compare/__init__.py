@@ -15,6 +15,9 @@
 """
 
 from app.compare.types import (
+    Cluster,
+    ClusterPairDiff,
+    ClusteringResult,
     CompareError,
     CompareOptions,
     ComparePair,
@@ -23,6 +26,9 @@ from app.compare.types import (
     CompareSummary,
     Diff,
     MatcherOp,
+    PivotBranch,
+    PivotEntry,
+    PivotResult,
     RawDiff,
     RecipeInput,
     SCHEMA_VERSION,
@@ -30,6 +36,9 @@ from app.compare.types import (
 from app.compare.interface import compare_recipes
 
 __all__ = [
+    "Cluster",
+    "ClusterPairDiff",
+    "ClusteringResult",
     "CompareError",
     "CompareOptions",
     "ComparePair",
@@ -38,6 +47,9 @@ __all__ = [
     "CompareSummary",
     "Diff",
     "MatcherOp",
+    "PivotBranch",
+    "PivotEntry",
+    "PivotResult",
     "RawDiff",
     "RecipeInput",
     "SCHEMA_VERSION",

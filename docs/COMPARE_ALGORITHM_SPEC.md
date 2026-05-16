@@ -365,10 +365,82 @@ Time=10
 
 ---
 
-## 9. 본 문서 변경 이력
+## 9. (1.1) N-way 가독성용 부가 산출물 — Clusters · Pivot
+
+본체가 채워주지 않으면 `app/compare/clustering.py`의 폴백이 자체 INI 파싱으로 채운다.
+본체가 더 정밀한 의미 단위 파싱을 한다면 직접 채워 라우터의 폴백을 비활성화할 수 있다.
+
+### 9.1 Clusters
+
+```python
+@dataclass(frozen=True)
+class Cluster:
+    id: str                            # "A", "B", "C", ... (26개 초과 시 "AA" 등)
+    recipe_ids: list[int]
+    representative_recipe_id: int
+    signature: str                     # 키-값 정규화 sha256
+    body_hash_match: bool              # True면 본문 바이트 동일
+    is_majority: bool                  # 최대 크기이고 size ≥ 2
+
+@dataclass(frozen=True)
+class ClusterPairDiff:
+    left_cluster_id: str
+    right_cluster_id: str
+    diffs: list[Diff]
+
+@dataclass(frozen=True)
+class ClusteringResult:
+    clusters: list[Cluster]
+    pair_diffs: list[ClusterPairDiff]
+```
+
+권장 규칙:
+- 본문이 바이트 단위로 같으면 즉시 같은 클러스터, `body_hash_match=True`.
+- 그렇지 않으면 키-값 정규화 시그니처가 같을 때 같은 클러스터.
+- 정렬: 크기 큰 클러스터부터 A, B, C ... 부여. 크기 1인 클러스터는 외톨이 후보로 UI가 강조.
+
+### 9.2 Pivot
+
+```python
+@dataclass(frozen=True)
+class PivotBranch:
+    value: str                         # "(없음)" 이면 해당 키가 누락된 설비들 묶음
+    recipe_ids: list[int]
+    is_majority: bool
+
+@dataclass(frozen=True)
+class PivotEntry:
+    section: str | None
+    key: str
+    branches: list[PivotBranch]        # 큰 그룹이 앞
+    is_outlier_present: bool           # size=1 그룹이 하나라도 있으면 True
+
+@dataclass(frozen=True)
+class PivotResult:
+    entries: list[PivotEntry]
+```
+
+권장 규칙:
+- 모든 입력 설비에서 동일한 값을 갖는 키는 기본 제외(`include_identical=False`).
+- 정렬: 분기 수 ↓, 외톨이 보유 키 ↑, 섹션·키 알파벳 ↑.
+
+### 9.3 CompareResult 확장
+
+```python
+@dataclass(frozen=True)
+class CompareResult:
+    ...
+    clusters: ClusteringResult | None = None
+    pivot: PivotResult | None = None
+```
+
+본체가 None을 반환해도 `interface.compare_recipes()`가 폴백으로 채운다.
+
+## 10. 본 문서 변경 이력
 
 | 버전 | 일자 | 변경 |
 |---|---|---|
 | 1.0 | 2026-05-13 | 최초 작성 |
+| 1.1 | 2026-05-14 | Clusters · Pivot 부가 산출물 추가 (N-way 가독성용) |
 
 문서를 수정하면 `schema_version` 상수(`backend/app/compare/types.py::SCHEMA_VERSION`)도 같은 값으로 올려야 한다.
