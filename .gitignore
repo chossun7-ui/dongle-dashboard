@@ -36,5 +36,6 @@ Thumbs.db
 .vscode/
 *.swp
 
-# Docker volumes (mounted into repo dir during dev)
-data/
+# Docker volumes (mounted into repo dir during dev; root-anchored so it doesn't
+# also swallow unrelated data/ dirs elsewhere in the repo, e.g. osaka-hotel-compare/data/)
+/data/

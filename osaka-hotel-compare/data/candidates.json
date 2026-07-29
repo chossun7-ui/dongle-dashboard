@@ -1,0 +1,15 @@
+[
+  {"hotel_name": "NEDOCO OSAKA West", "area": "니시쿠조", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "MIKI", "area": "니시쿠조", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Business Hotel Urbanty Nishikujo", "area": "니시쿠조", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Time 西九条", "area": "니시쿠조", "is_seed": false, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "MIMARU Osaka Namba Station", "area": "난바", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "MIMARU Osaka Namba North", "area": "난바", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Toyoko Inn Osaka Namba", "area": "난바", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Dormy Inn PREMIUM Nanba", "area": "난바", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Namba Oriental Hotel", "area": "난바", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Sotetsu Grand Fresa Osaka Namba", "area": "난바(니혼바시)", "is_seed": false, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Hotel Mikado", "area": "니시나리", "is_seed": true, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Hotel Shin-Imamiya", "area": "니시나리", "is_seed": false, "rakuten_hotel_no": null, "amadeus_hotel_id": null},
+  {"hotel_name": "Hotel Sunplaza 2 Annex", "area": "니시나리", "is_seed": false, "rakuten_hotel_no": null, "amadeus_hotel_id": null}
+]

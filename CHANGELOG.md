@@ -3,6 +3,11 @@
 이 파일은 본 저장소의 모든 변경사항을 사람이 읽기 쉬운 형식으로 기록한다. 최상단이 최신이다.
 규칙: 한 줄 요약(날짜 · 요약 · 관련 파일/디렉토리). 사소한 오타 수정도 빠뜨리지 않는다.
 
+## 2026-07-29
+
+- 2026-07-29 · `osaka-hotel-compare/` 추가 — 본 저장소의 본래 목적(Film Script 비교 대시보드)과는 무관한 독립 CLI 도구. 오사카 숙소(2026-10-08~12, 성인 3명 기준)를 4박 총액 오름차순으로 비교해 `results.md`/`results.csv`/`checklist.md`를 생성한다. 라쿠텐 트래블/Amadeus/SerpAPI 연동 코드는 준비해 두었으나 API 키가 없어 이번 실행은 WebSearch 기반 수동 조사 데이터(`data/manual_research.json`)만 사용했고, 이 세션의 WebFetch 도구 전면 장애(모든 URL 403)로 대부분의 가격 필드가 N/A로 남아 있다(추정치 대신 정직하게 미확인 처리). · `osaka-hotel-compare/`
+- 2026-07-29 · `.gitignore`의 `data/` 규칙이 슬래시 없이 전역 매칭되어 `osaka-hotel-compare/data/`까지 무시하던 문제를 발견 — docker-compose 볼륨 마운트 대상인 저장소 루트만 가리키도록 `/data/`로 앵커링. · `.gitignore`
+
 ## 2026-05-15
 
 - 2026-05-15 · N-way 비교 가독성 산출물 추가 (schema 1.0 → 1.1). 설비별로 본문이 동일하거나 키-값 시그니처가 같은 그룹을 K개 Cluster로 압축하여 K(K-1)/2 페어만 보여준다. 본체가 비워둔 경우 라우터가 폴백으로 채운다. · `backend/app/compare/types.py`, `clustering.py`, `interface.py`, `__init__.py`
