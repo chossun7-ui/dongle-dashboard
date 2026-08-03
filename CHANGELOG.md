@@ -3,6 +3,10 @@
 이 파일은 본 저장소의 모든 변경사항을 사람이 읽기 쉬운 형식으로 기록한다. 최상단이 최신이다.
 규칙: 한 줄 요약(날짜 · 요약 · 관련 파일/디렉토리). 사소한 오타 수정도 빠뜨리지 않는다.
 
+## 2026-08-03
+
+- 2026-08-03 · 테스트 커버리지 분석 중 생성되는 pytest-cov 산출물(`.coverage`, `htmlcov/`)을 gitignore에 추가. 분석 결과: 전체 32% — compare/clustering/parsers는 92~100%, API 라우터 8종·ftp_scanner·core·db/session은 0%, 프론트엔드는 테스트 러너 부재. 개선 우선순위는 (1) `_upsert_recipe` 스냅샷 로직, (2) TestClient 기반 라우터 통합 테스트. · `.gitignore`
+
 ## 2026-05-15
 
 - 2026-05-15 · N-way 비교 가독성 산출물 추가 (schema 1.0 → 1.1). 설비별로 본문이 동일하거나 키-값 시그니처가 같은 그룹을 K개 Cluster로 압축하여 K(K-1)/2 페어만 보여준다. 본체가 비워둔 경우 라우터가 폴백으로 채운다. · `backend/app/compare/types.py`, `clustering.py`, `interface.py`, `__init__.py`

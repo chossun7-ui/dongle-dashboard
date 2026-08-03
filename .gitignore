@@ -7,6 +7,9 @@ venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
 *.db
 *.db-journal
 *.db-wal
